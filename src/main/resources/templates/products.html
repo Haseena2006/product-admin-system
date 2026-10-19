@@ -1,0 +1,699 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Admin System</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+      color: #263247;
+    }
+
+    header {
+      background: #173b70;
+      color: white;
+      padding: 22px 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    header p {
+      margin: 7px 0 0;
+      color: #d9e7ff;
+      font-size: 13px;
+    }
+
+    main {
+      max-width: 1400px;
+      margin: 28px auto;
+      padding: 0 22px;
+    }
+
+    .panel {
+      background: white;
+      padding: 24px;
+      margin-bottom: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 18px rgba(20, 45, 80, 0.06);
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 19px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 11px;
+      border: 1px solid #d6deea;
+      border-radius: 7px;
+      font-size: 14px;
+      background: white;
+    }
+
+    textarea {
+      min-height: 42px;
+      resize: vertical;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: 2px solid #c6dcff;
+      border-color: #2864bd;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 7px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .primary {
+      background: #2459a9;
+      color: white;
+    }
+
+    .secondary {
+      background: #e8edf5;
+      color: #263247;
+    }
+
+    .edit-btn {
+      background: #e0edff;
+      color: #194f9b;
+      margin: 2px;
+    }
+
+    .delete-btn {
+      background: #ffebeb;
+      color: #b42323;
+      margin: 2px;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .message {
+      margin-top: 14px;
+      font-size: 14px;
+      overflow-wrap: anywhere;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      min-width: 950px;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 13px 12px;
+      border-bottom: 1px solid #e8edf4;
+      text-align: left;
+      font-size: 13px;
+      vertical-align: middle;
+    }
+
+    th {
+      background: #f0f4fa;
+      color: #40516a;
+    }
+
+    tbody tr:hover {
+      background: #f8faff;
+    }
+
+    .price {
+      font-weight: bold;
+      color: #176b47;
+    }
+
+    .stock {
+      display: inline-block;
+      background: #e5f7ed;
+      color: #176b47;
+      padding: 5px 9px;
+      border-radius: 20px;
+    }
+
+    .low-stock {
+      background: #fff1d6;
+      color: #915b00;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .page-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .muted {
+      color: #69788c;
+      font-size: 13px;
+    }
+
+    @media (max-width: 800px) {
+      .form-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .filters {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 520px) {
+      .form-grid, .filters {
+        grid-template-columns: 1fr;
+      }
+
+      .panel {
+        padding: 16px;
+      }
+
+      header h1 {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div>
+    <h1>Product Admin System</h1>
+    <p>Manage products, inventory and pricing</p>
+  </div>
+  <div>Admin Dashboard</div>
+</header>
+
+<main>
+
+  <section class="panel">
+    <h2 id="formTitle">Add New Product</h2>
+
+    <form id="productForm">
+      <div class="form-grid">
+        <div class="field">
+          <label for="name">Product Name</label>
+          <input id="name" type="text" maxlength="100"
+                 placeholder="Enter product name" required>
+        </div>
+
+        <div class="field">
+          <label for="category">Category</label>
+          <input id="category" type="text" maxlength="100"
+                 placeholder="e.g. Electronics" required>
+        </div>
+
+        <div class="field">
+          <label for="price">Price (₹)</label>
+          <input id="price" type="number" min="0" step="0.01"
+                 placeholder="Enter price" required>
+        </div>
+
+        <div class="field">
+          <label for="stock">Stock Quantity</label>
+          <input id="stock" type="number" min="0" step="1"
+                 placeholder="Enter stock" required>
+        </div>
+
+        <div class="field">
+          <label for="rating">Rating (0–5)</label>
+          <input id="rating" type="number" min="0" max="5" step="1"
+                 value="0" required>
+        </div>
+
+        <div class="field">
+          <label for="description">Description</label>
+          <textarea id="description" maxlength="500"
+                    placeholder="Enter product description" required></textarea>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="primary" type="submit" id="submitButton">
+          Add Product
+        </button>
+        <button class="secondary" type="button" id="cancelButton"
+                hidden>Cancel Edit</button>
+      </div>
+
+      <p class="message" id="formMessage" role="status"></p>
+    </form>
+  </section>
+
+  <section class="panel">
+    <h2>Product Inventory</h2>
+    <p class="muted">Search, filter, sort and manage your products.</p>
+
+    <div class="filters">
+      <input id="search" type="search"
+             placeholder="Search by product name...">
+
+      <select id="categoryFilter">
+        <option value="">All Categories</option>
+      </select>
+
+      <select id="sortBy" aria-label="Sort products by">
+        <option value="name">Sort: Name</option>
+        <option value="price">Sort: Price</option>
+        <option value="stock">Sort: Stock</option>
+        <option value="rating">Sort: Rating</option>
+      </select>
+
+      <select id="direction" aria-label="Sort direction">
+        <option value="asc">Ascending</option>
+        <option value="desc">Descending</option>
+      </select>
+    </div>
+
+    <div class="filters">
+      <div class="field">
+        <label for="pageSize">Records per page</label>
+        <select id="pageSize">
+          <option value="10">10 records</option>
+          <option value="20">20 records</option>
+          <option value="50">50 records</option>
+        </select>
+      </div>
+    </div>
+
+    <p class="message" id="listMessage" role="status"></p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>Product Name</th>
+          <th>Category</th>
+          <th>Description</th>
+          <th>Price</th>
+          <th>Stock</th>
+          <th>Rating</th>
+          <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody id="productTable"></tbody>
+      </table>
+    </div>
+
+    <div class="pagination">
+      <span class="muted" id="pageInfo">Loading products...</span>
+      <div class="page-buttons">
+        <button class="secondary" id="previousButton" type="button">
+          Previous
+        </button>
+        <button class="secondary" id="nextButton" type="button">
+          Next
+        </button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  const API_URL = '/api/products';
+
+  let currentPage = 0;
+  let totalPages = 0;
+  let editingId = null;
+  let searchTimer;
+
+  const form = document.getElementById('productForm');
+  const table = document.getElementById('productTable');
+  const formMessage = document.getElementById('formMessage');
+  const listMessage = document.getElementById('listMessage');
+
+  function showMessage(element, message, isError = false) {
+    element.textContent = message;
+    element.style.color = isError ? '#b42323' : '#176b47';
+  }
+
+  async function readError(response) {
+    try {
+      const data = await response.json();
+      return data.detail || data.message || data.error ||
+              'Request failed. Please check the entered details.';
+    } catch {
+      return 'Request failed (' + response.status + '). Please try again.';
+    }
+  }
+
+  function addCell(row, value, className = '') {
+    const cell = document.createElement('td');
+    cell.textContent = value ?? '';
+
+    if (className) {
+      cell.className = className;
+    }
+
+    row.appendChild(cell);
+    return cell;
+  }
+
+  function addButton(row, label, className, handler) {
+    const cell = row.lastElementChild;
+    const button = document.createElement('button');
+
+    button.type = 'button';
+    button.textContent = label;
+    button.className = className;
+    button.addEventListener('click', handler);
+
+    cell.appendChild(button);
+  }
+
+  function updateCategoryOptions(products) {
+    const select = document.getElementById('categoryFilter');
+    const selected = select.value;
+    const categories = new Set(
+            Array.from(select.options)
+                    .filter(option => option.value !== '')
+                    .map(option => option.value)
+    );
+
+    products.forEach(product => {
+      if (product.category) {
+        categories.add(product.category);
+      }
+    });
+
+    select.replaceChildren();
+
+    const allOption = document.createElement('option');
+    allOption.value = '';
+    allOption.textContent = 'All Categories';
+    select.appendChild(allOption);
+
+    [...categories].sort((a, b) => a.localeCompare(b)).forEach(category => {
+      const option = document.createElement('option');
+      option.value = category;
+      option.textContent = category;
+      select.appendChild(option);
+    });
+
+    select.value = selected;
+  }
+
+  async function loadProducts() {
+    listMessage.textContent = 'Loading products...';
+
+    const params = new URLSearchParams({
+      search: document.getElementById('search').value.trim(),
+      category: document.getElementById('categoryFilter').value,
+      sortBy: document.getElementById('sortBy').value,
+      direction: document.getElementById('direction').value,
+      page: String(currentPage),
+      size: document.getElementById('pageSize').value
+    });
+
+    try {
+      const response = await fetch(`${API_URL}?${params}`);
+
+      if (!response.ok) {
+        throw new Error(await readError(response));
+      }
+
+      const result = await response.json();
+
+      const products = result.content || [];
+
+      totalPages = result.totalPages ?? 0;
+
+      table.replaceChildren();
+      updateCategoryOptions(products);
+
+      if (products.length === 0) {
+        const row = document.createElement('tr');
+        const cell = addCell(row, 'No products found.');
+        cell.colSpan = 8;
+        cell.style.textAlign = 'center';
+        table.appendChild(row);
+      }
+
+      products.forEach(product => {
+        const row = document.createElement('tr');
+
+        addCell(row, product.id);
+        addCell(row, product.name);
+        addCell(row, product.category);
+        addCell(row, product.description);
+        addCell(row, '₹' + Number(product.price).toFixed(2), 'price');
+
+        const stockCell = addCell(row, product.stock);
+        const stockLabel = document.createElement('span');
+        stockLabel.className =
+                Number(product.stock) <= 5 ? 'stock low-stock' : 'stock';
+        stockLabel.textContent = product.stock;
+        stockCell.textContent = '';
+        stockCell.appendChild(stockLabel);
+
+        addCell(row, product.rating + ' / 5');
+
+        const actionCell = document.createElement('td');
+        row.appendChild(actionCell);
+
+        addButton(row, 'Edit', 'edit-btn', () => editProduct(product));
+        addButton(row, 'Delete', 'delete-btn', () => deleteProduct(product.id));
+
+        table.appendChild(row);
+      });
+
+      const total = result.totalElements ?? products.length;
+      const size = Number(document.getElementById('pageSize').value);
+      const start = total === 0 ? 0 : currentPage * size + 1;
+      const end = Math.min((currentPage + 1) * size, total);
+
+      document.getElementById('pageInfo').textContent =
+              `Showing ${start}–${end} of ${total} products | Page ${
+                      totalPages === 0 ? 0 : currentPage + 1
+              } of ${totalPages}`;
+
+      document.getElementById('previousButton').disabled =
+              currentPage <= 0;
+
+      document.getElementById('nextButton').disabled =
+              totalPages === 0 || currentPage >= totalPages - 1;
+
+      listMessage.textContent = '';
+    } catch (error) {
+      listMessage.textContent = error.message ||
+              'Unable to load products. Check whether the backend is running.';
+      listMessage.style.color = '#b42323';
+    }
+  }
+
+  function editProduct(product) {
+    editingId = product.id;
+
+    document.getElementById('name').value = product.name ?? '';
+    document.getElementById('description').value = product.description ?? '';
+    document.getElementById('category').value = product.category ?? '';
+    document.getElementById('price').value = product.price ?? '';
+    document.getElementById('stock').value = product.stock ?? 0;
+    document.getElementById('rating').value = product.rating ?? 0;
+
+    document.getElementById('formTitle').textContent = 'Edit Product';
+    document.getElementById('submitButton').textContent = 'Update Product';
+    document.getElementById('cancelButton').hidden = false;
+
+    formMessage.textContent = '';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function resetForm() {
+    form.reset();
+    editingId = null;
+
+    document.getElementById('formTitle').textContent = 'Add New Product';
+    document.getElementById('submitButton').textContent = 'Add Product';
+    document.getElementById('cancelButton').hidden = true;
+    document.getElementById('rating').value = '0';
+  }
+
+  document.getElementById('cancelButton').addEventListener('click', () => {
+    resetForm();
+    formMessage.textContent = '';
+  });
+
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+
+    const product = {
+      name: document.getElementById('name').value.trim(),
+      description: document.getElementById('description').value.trim(),
+      category: document.getElementById('category').value.trim(),
+      price: Number(document.getElementById('price').value),
+      stock: Number(document.getElementById('stock').value),
+      rating: Number(document.getElementById('rating').value)
+    };
+
+    if (!product.name || !product.description || !product.category) {
+      showMessage(formMessage, 'Please fill in all required fields.', true);
+      return;
+    }
+
+    if (!Number.isFinite(product.price) || product.price < 0 ||
+            !Number.isInteger(product.stock) || product.stock < 0 ||
+            !Number.isInteger(product.rating) ||
+            product.rating < 0 || product.rating > 5) {
+      showMessage(formMessage, 'Check price, stock and rating values.', true);
+      return;
+    }
+
+    const isEditing = editingId !== null;
+    const url = isEditing ? `${API_URL}/${editingId}` : API_URL;
+
+    try {
+      const response = await fetch(url, {
+        method: isEditing ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(product)
+      });
+
+      if (!response.ok) {
+        throw new Error(await readError(response));
+      }
+
+      showMessage(
+              formMessage,
+              isEditing ? 'Product updated successfully!' :
+                      'Product added successfully!'
+      );
+
+      resetForm();
+      currentPage = 0;
+      await loadProducts();
+    } catch (error) {
+      showMessage(formMessage, error.message, true);
+    }
+  });
+
+  async function deleteProduct(id) {
+    if (!confirm('Are you sure you want to delete this product?')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/${id}`, {
+        method: 'DELETE'
+      });
+
+      if (!response.ok) {
+        throw new Error(await readError(response));
+      }
+
+      showMessage(listMessage, 'Product deleted successfully!');
+
+      if (table.rows.length === 1 && currentPage > 0) {
+        currentPage--;
+      }
+
+      if (editingId === id) {
+        resetForm();
+      }
+
+      await loadProducts();
+      showMessage(listMessage, 'Product deleted successfully!');
+    } catch (error) {
+      showMessage(listMessage, error.message, true);
+    }
+  }
+
+  function resetPageAndLoad() {
+    currentPage = 0;
+    loadProducts();
+  }
+
+  document.getElementById('search').addEventListener('input', () => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(resetPageAndLoad, 300);
+  });
+
+  ['categoryFilter', 'sortBy', 'direction', 'pageSize'].forEach(id => {
+    document.getElementById(id).addEventListener('change', resetPageAndLoad);
+  });
+
+  document.getElementById('previousButton').addEventListener('click', () => {
+    if (currentPage > 0) {
+      currentPage--;
+      loadProducts();
+    }
+  });
+
+  document.getElementById('nextButton').addEventListener('click', () => {
+    if (currentPage < totalPages - 1) {
+      currentPage++;
+      loadProducts();
+    }
+  });
+
+  loadProducts();
+</script>
+
+</body>
+</html>
+

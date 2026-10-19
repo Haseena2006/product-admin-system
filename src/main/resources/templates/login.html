@@ -1,0 +1,167 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login | Product Admin System</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #eaf1ff, #f8faff);
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 410px;
+            background: white;
+            padding: 36px;
+            border-radius: 16px;
+            box-shadow: 0 12px 40px rgba(25, 55, 100, 0.12);
+        }
+
+        .logo {
+            width: 52px;
+            height: 52px;
+            display: grid;
+            place-items: center;
+            background: #e8efff;
+            color: #2459a9;
+            border-radius: 13px;
+            font-size: 25px;
+            margin-bottom: 22px;
+        }
+        .login-logo {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .logo-img {
+            width: 90px;
+            height: 90px;
+            object-fit: contain;
+        }
+
+        h1 { color: #173b70; margin: 0 0 8px; font-size: 27px; }
+
+        .subtitle { color: #748096; font-size: 14px; margin-bottom: 28px; }
+
+        label { display: block; margin: 18px 0 8px; color: #29364b; font-size: 14px; font-weight: bold; }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #d8e0ed;
+            border-radius: 8px;
+            outline: none;
+            font-size: 15px;
+        }
+
+        input:focus { border-color: #2459a9; }
+
+        .password-row { display: flex; gap: 8px; }
+
+        .password-row input { flex: 1; min-width: 0; }
+
+        .show-button {
+            border: 1px solid #d8e0ed;
+            border-radius: 8px;
+            background: white;
+            padding: 0 12px;
+            cursor: pointer;
+        }
+
+        .login-button {
+            width: 100%;
+            margin-top: 25px;
+            padding: 14px;
+            border: 0;
+            border-radius: 8px;
+            background: #2459a9;
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .login-button:hover { background: #173b70; }
+
+        .message { font-size: 13px; margin-top: 16px; }
+        .error { color: #b42323; }
+        .success { color: #176b47; }
+
+        .footer { text-align: center; color: #8791a2; font-size: 12px; margin-top: 24px; }
+    </style>
+</head>
+<body>
+<main class="login-card">
+    <div class="logo">
+        <img src="/images/logo.png" alt="Logo" class="logo-img">
+    </div>
+    <h1>Welcome Back</h1>
+    <p class="subtitle">Sign in to your Product Admin account.</p>
+
+    <p class="message error" th:if="${param.error}">
+        Invalid email or password. Please try again.
+    </p>
+
+    <p class="message success" th:if="${param.logout}">
+        You have logged out successfully.
+    </p>
+
+    <form th:action="@{/login}" method="post">
+        <label for="email">Email Address</label>
+        <input
+                id="email"
+                type="email"
+                name="username"
+                placeholder="admin@example.com"
+                autocomplete="username"
+                required>
+
+        <label for="password">Password</label>
+        <div class="password-row">
+            <input
+                    id="password"
+                    type="password"
+                    name="password"
+                    placeholder="Enter your password"
+                    autocomplete="current-password"
+                    required>
+
+            <button class="show-button" type="button"
+                    onclick="togglePassword()">Show</button>
+        </div>
+
+        <button class="login-button" type="submit">Sign In</button>
+    </form>
+
+    <p class="footer">Product Admin System</p>
+</main>
+
+<script>
+    function togglePassword() {
+        const password = document.getElementById("password");
+        const button = document.querySelector(".show-button");
+
+        if (password.type === "password") {
+            password.type = "text";
+            button.textContent = "Hide";
+        } else {
+            password.type = "password";
+            button.textContent = "Show";
+        }
+    }
+</script>
+</body>
+</html>
+
