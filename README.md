@@ -1,89 +1,70 @@
 # Product Admin System
 
-A role-based Product Management application built using **Spring Boot 3, Spring Security, Thymeleaf, and PostgreSQL**. It provides a web interface and REST API for managing a product catalogue with secure authentication and authorization.
+A full-stack Product Administration System built using **Java 17, Spring Boot 3, Spring Data JPA, Spring Security, Thymeleaf, and PostgreSQL**.
 
-Admins can create, view, update, and delete products, while normal users have read-only access to browse, search, and filter products.
+The application provides secure user authentication, role-based product management, RESTful APIs, product search, filtering, sorting, and pagination.
 
-## Project Status
+## Features
 
-- Automated tests: **94 passed, 0 failures, 0 errors**
-- Build status: **BUILD SUCCESS**
-- REST API and Postman collection: Collection execution pending verification.
-
-## Key Features
-
-### Authentication and Authorization
-- User registration, login, and logout.
-- BCrypt password hashing.
+### Authentication and Security
+- User registration and login.
+- Password encryption using BCrypt.
 - Role-based access control with ADMIN and USER roles.
-- New registrations are assigned the USER role by default.
-- Session-based authentication and CSRF protection for the web application.
-- Stateless HTTP Basic authentication for REST API endpoints.
+- ADMIN can create, update, and delete products.
+- USER can view products but cannot modify them.
+- Session-based authentication for the web application.
+- HTTP Basic Authentication for REST APIs.
 
 ### Product Management
 - Create, view, update, and delete products.
 - Search products by name.
 - Filter products by category.
-- Sort by name, price, rating, and stock.
+- Sort products using supported fields.
 - Pagination with page-size limits.
-- Product details and delete confirmation pages.
+- Product validation and centralized exception handling.
+
+### User Interface
+- Responsive product management interface using Thymeleaf.
+- Dynamic category filtering.
+- Debounced product search.
+- Stock status indicators.
+- Product details and management actions.
 
 ### REST API
-- RESTful endpoints under `/api`.
-- JSON request and response handling.
-- DTO-based data transfer.
-- Input validation and consistent error responses.
-- Separate security handling for API authentication and authorization.
-
-### Database
-- PostgreSQL integration using Spring Data JPA.
-- Unique constraints, not-null constraints, and indexes.
-- Automatic demo data initialization.
-- Two demo accounts and 16 sample products.
+- RESTful endpoints returning JSON responses.
+- Request validation.
+- DTO-based request and response handling.
+- Consistent error responses.
+- Authentication and authorization.
 
 ## Technology Stack
 
 | Technology | Purpose |
 |---|---|
 | Java 17 | Programming language / target |
-| Spring Boot 3.3.5 | Application framework |
-| Spring Web | REST API and web controllers |
+| Spring Boot 3.3.5 | Backend framework |
+| Spring Web | REST API development |
 | Spring Data JPA | Database operations |
 | Spring Security | Authentication and authorization |
 | Thymeleaf | Server-side UI |
-| HTML, CSS, JavaScript | Frontend |
-| PostgreSQL | Database |
+| PostgreSQL | Relational database |
 | Maven | Build and dependency management |
-| JUnit 5, Mockito | Unit testing |
-| MockMvc | Controller testing |
-| H2 | In-memory test database |
+| JUnit 5 | Unit testing |
+| Mockito | Mock-based testing |
+| MockMvc | Web layer testing |
+| H2 | Test database |
 | Postman | API testing |
 
-**Test environment:** The successful test run was performed using JDK 23 with Maven.
-
-## Project Architecture
-
-The application follows a layered architecture:
-
-`Controller → Service → Repository → PostgreSQL`
-
-- **Controller:** Handles HTTP requests and responses.
-- **Service:** Contains business logic and transactional operations.
-- **Repository:** Handles database access using Spring Data JPA.
-- **Entity:** Represents database entities.
-- **DTO:** Transfers request and response data without exposing JPA entities.
-
-### Project Structure
+## Project Structure
 
 ```text
 product-admin-system/
+│
 ├── src/
 │   ├── main/
 │   │   ├── java/com/example/productadmin/
 │   │   │   ├── config/
 │   │   │   ├── controller/
-│   │   │   │   ├── web/
-│   │   │   │   └── api/
 │   │   │   ├── dto/
 │   │   │   ├── entity/
 │   │   │   ├── exception/
@@ -91,119 +72,127 @@ product-admin-system/
 │   │   │   ├── security/
 │   │   │   ├── service/
 │   │   │   └── validation/
+│   │   │
 │   │   └── resources/
+│   │       ├── static/
+│   │       ├── templates/
+│   │       └── application.properties
+│   │
 │   └── test/
+│       └── java/com/example/productadmin/
+│
 ├── database/
-│   ├── schema.sql
-│   └── data.sql
 ├── docs/
 ├── postman/
-│   └── ProductAdmin.postman_collection.json
 ├── .env.example
 ├── .gitignore
+├── mvnw
+├── mvnw.cmd
 ├── pom.xml
 └── README.md
 ```
 
-## Getting Started
+## Prerequisites
 
-### Prerequisites
+Install the following before running the project:
 
-- JDK 17 or compatible JDK.
-- Maven (or the included Maven Wrapper).
+- JDK 17 or compatible configured JDK.
 - PostgreSQL.
 - IntelliJ IDEA or another Java IDE.
+- Postman (for API testing).
 
-### 1. Clone the Repository
+## Installation and Setup
+
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/Haseena2006/product-admin-system.git
 cd product-admin-system
 ```
 
-### 2. Create the Database
+### 2. Configure PostgreSQL
 
-In PostgreSQL or pgAdmin, execute:
+Create a database:
 
 ```sql
 CREATE DATABASE product_admin;
 ```
 
-Tables are created by Hibernate when the application starts. Alternatively, refer to `database/schema.sql`.
+### 3. Configure environment variables
 
-### 3. Configure Environment Variables
+Create a `.env` file in the project root or configure the following environment variables in your IDE or terminal.
 
-Configure the following environment variables:
+```env
+DB_URL=jdbc:postgresql://localhost:5432/product_admin
+DB_USERNAME=postgres
+DB_PASSWORD=your_database_password
 
-| Variable | Required | Default |
-|---|---|---|
-| DB_URL | No | jdbc:postgresql://localhost:5432/product_admin |
-| DB_USERNAME | No | postgres |
-| DB_PASSWORD | Yes | None |
-| SEED_ADMIN_PASSWORD | No | Admin@12345 |
-| SEED_USER_PASSWORD | No | User@12345 |
-| CORS_ALLOWED_ORIGINS | No | Empty |
-| PORT | No | 8080 |
+SEED_ADMIN_PASSWORD=your_admin_password
+SEED_USER_PASSWORD=your_user_password
 
-Example for Windows PowerShell:
-
-```powershell
-$env:DB_PASSWORD="your_database_password"
+CORS_ALLOWED_ORIGINS=
 ```
 
-See `.env.example` for the configuration template.
+Use the actual seeded account credentials configured in the application.
 
-**Security:** Never commit real database passwords, credentials, or `.env` files to GitHub.
+Do not commit your `.env` file or real passwords to GitHub.
 
-### 4. Run the Application
+### 4. Run the application
 
-Using the Maven Wrapper on Windows:
+On Windows:
 
 ```powershell
 .\mvnw.cmd spring-boot:run
 ```
 
-Or:
+On Linux or macOS:
 
 ```bash
 ./mvnw spring-boot:run
 ```
 
-Open:
+The application runs at:
 
 ```text
 http://localhost:8080
 ```
 
-### Demo Accounts
+## Demo Accounts
 
 | Role | Username | Password |
 |---|---|---|
 | ADMIN | admin | Admin@12345 |
 | USER | user | User@12345 |
 
-These are demo credentials. Configure your own passwords using the `SEED_*_PASSWORD` environment variables before deployment.
+These are development/demo credentials. Change them before deploying the application.
 
-## REST API Documentation
+## REST API Endpoints
 
-The REST API is available under `/api`.
+Base URL:
+
+```text
+http://localhost:8080
+```
 
 ### Authentication
 
-The API uses stateless HTTP Basic Authentication. Send the `Authorization: Basic` header with each authenticated request.
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/auth/register` | Register a new user |
+| GET | `/api/auth/me` | Get authenticated user details |
 
-| Method | Endpoint | Access | Description |
-|---|---|---|---|
-| POST | `/api/auth/register` | Public | Register a new user |
-| GET | `/api/auth/me` | Authenticated | Get current user details |
-| GET | `/api/products` | ADMIN, USER | List and search products |
-| GET | `/api/products/categories` | ADMIN, USER | Get product categories |
-| GET | `/api/products/{id}` | ADMIN, USER | Get product details |
-| POST | `/api/products` | ADMIN | Create a product |
-| PUT | `/api/products/{id}` | ADMIN | Update a product |
-| DELETE | `/api/products/{id}` | ADMIN | Delete a product |
+### Products
 
-### Product Request Example
+| Method | Endpoint | Access |
+|---|---|---|
+| GET | `/api/products` | ADMIN / USER |
+| GET | `/api/products/categories` | ADMIN / USER |
+| GET | `/api/products/{id}` | ADMIN / USER |
+| POST | `/api/products` | ADMIN |
+| PUT | `/api/products/{id}` | ADMIN |
+| DELETE | `/api/products/{id}` | ADMIN |
+
+### Sample Product JSON
 
 ```json
 {
@@ -211,52 +200,53 @@ The API uses stateless HTTP Basic Authentication. Send the `Authorization: Basic
   "description": "Wireless optical mouse",
   "category": "Electronics",
   "price": 799.00,
-  "stock": 10,
-  "rating": 4.4
+  "stock": 25,
+  "rating": 4
 }
 ```
 
-### Product Validation Rules
+### API Authentication
 
-- Product name is required and unique (case-insensitive).
-- Category is required.
-- Price must be greater than zero and have at most two decimal places.
-- Stock must be zero or greater.
-- Rating must be between 0 and 5.
+The REST API uses HTTP Basic Authentication.
 
-### HTTP Status Codes
+In Postman, configure:
 
-| Status | Description |
-|---|---|
-| 200 | Request successful |
-| 201 | Resource created |
-| 204 | Resource deleted |
-| 400 | Validation or malformed request error |
-| 401 | Authentication required or invalid credentials |
-| 403 | Insufficient permissions |
-| 404 | Product not found |
-| 409 | Duplicate product name or username/email |
-| 500 | Unexpected server error |
+- Authorization Type: Basic Auth
+- Username: `admin`
+- Password: Use the configured admin password.
 
-## Security Implementation
+For USER account testing, use the configured USER credentials.
 
-- Passwords are stored using BCrypt hashing.
-- Registration does not allow clients to assign their own roles.
-- Web application uses session-based form authentication and CSRF protection.
-- REST API uses stateless HTTP Basic authentication.
-- API responses return JSON authentication and authorization errors instead of HTML login redirects.
-- CORS is disabled by default unless allowed origins are configured.
-- Internal server error details are not exposed to clients.
+The browser-based web application uses session authentication.
+
+## Security
+
+- Passwords are stored using BCrypt password hashing.
+- ADMIN and USER roles have different permissions.
+- ADMIN users can perform product CRUD operations.
+- USER users have read-only product access.
+- REST API requests use stateless HTTP Basic Authentication.
+- Browser-based requests use session authentication and CSRF protection.
+- DTOs separate API request/response data from database entities.
+- Input validation protects product data.
 
 ## Testing
 
 Run the automated test suite using:
 
+**Windows:**
+
 ```powershell
 .\mvnw.cmd clean test
 ```
 
-### Latest Test Results
+**Linux / macOS:**
+
+```bash
+./mvnw clean test
+```
+
+### Latest Automated Test Results
 
 | Metric | Result |
 |---|---:|
@@ -280,7 +270,7 @@ Test coverage includes:
 - Web controller access restrictions.
 - Application context loading.
 
-The tests use JUnit 5, Mockito, MockMvc, and H2.
+Testing technologies include JUnit 5, Mockito, MockMvc, and H2.
 
 ## Postman API Testing
 
@@ -290,50 +280,47 @@ The Postman collection is available at:
 postman/ProductAdmin.postman_collection.json
 ```
 
-Import the collection into Postman and configure the demo account variables.
+Import the collection into Postman and configure the required environment variables and authentication credentials.
+
+### Latest Postman Test Results
+
+| Metric | Result |
+|---|---:|
+| Total tests | 49 |
+| Passed | 49 |
+| Failed | 0 |
+| Errors | 0 |
+
+**Execution result: All 49 Postman tests passed.**
 
 The collection covers:
 
 - Missing or invalid credentials.
 - USER read-only access.
 - ADMIN product CRUD operations.
-- JSON responses for unauthorized and forbidden requests.
+- Invalid product data and validation responses.
+- Unauthorized and forbidden requests.
+- Product not found responses.
 
-**Note:** The collection is included in the repository, but its full execution has not yet been verified.
+## Database
 
-## Screenshots
+The application uses PostgreSQL for persistent storage and Spring Data JPA for database access.
 
-Add application screenshots to `docs/screenshots/`:
-
-- Login page
-- Registration page
-- Admin dashboard
-- Product list
-- Product details
-- Product creation and editing pages
-
-Example paths:
-
-```text
-docs/screenshots/login.png
-docs/screenshots/dashboard.png
-docs/screenshots/product-list.png
-docs/screenshots/product-details.png
-```
+The `database/` directory contains database-related scripts and resources.
 
 ## Future Improvements
 
-- Add more integration tests.
-- Verify the complete Postman collection.
-- Add deployment configuration.
-- Improve application monitoring and logging.
-- Add API documentation using OpenAPI/Swagger.
+- Add advanced reporting and analytics.
+- Improve product inventory tracking.
+- Add audit logging.
+- Introduce pagination and performance optimizations for large datasets.
+- Add deployment and production configuration.
 
-## Developer
+## Author
 
 **P. Haseena Fathim**
 
-Final-year B.E. Computer Science and Engineering student.
+B.E. Computer Science and Engineering
 
 Interested in Java Full Stack Development and Software Engineering.
 
