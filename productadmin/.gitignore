@@ -1,21 +1,18 @@
-# Maven build output
 target/
 
-# IntelliJ
 .idea/
 *.iml
 out/
 
-# OS files
 .DS_Store
 Thumbs.db
 
-# Secrets and local config
 .env
 *.env
+.env.*
+!.env.example
 application-local.properties
 application-secret.properties
 
-# Logs
 *.log
 logs/
