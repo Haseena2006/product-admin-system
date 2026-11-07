@@ -140,8 +140,8 @@ Configure the following environment variables:
 | DB_URL | No | jdbc:postgresql://localhost:5432/product_admin |
 | DB_USERNAME | No | postgres |
 | DB_PASSWORD | Yes | None |
-| SEED_ADMIN_PASSWORD | No | Admin@123 |
-| SEED_USER_PASSWORD | No | User@123 |
+| SEED_ADMIN_PASSWORD | No | Admin@12345 |
+| SEED_USER_PASSWORD | No | User@12345 |
 | CORS_ALLOWED_ORIGINS | No | Empty |
 | PORT | No | 8080 |
 
