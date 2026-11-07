@@ -40,7 +40,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
 @WebMvcTest(ProductApiController.class)
 @Import(SecurityConfig.class)
 class ProductApiControllerTest {
@@ -56,13 +55,29 @@ class ProductApiControllerTest {
 
     private ProductResponse sampleResponse() {
         LocalDateTime now = LocalDateTime.of(2026, 1, 1, 10, 0);
-        return new ProductResponse(1L, "Wireless Mouse", "Silent clicks", "Electronics",
-                new BigDecimal("799.00"), 10, 4.4, now, now);
+
+        return new ProductResponse(
+                1L,
+                "Wireless Mouse",
+                "Silent clicks",
+                "Electronics",
+                new BigDecimal("799.00"),
+                10,
+                4.4,
+                now,
+                now
+        );
     }
 
     private ProductRequest validRequest() {
-        return new ProductRequest("Wireless Mouse", "Silent clicks", "Electronics",
-                new BigDecimal("799.00"), 10, 4.4);
+        return new ProductRequest(
+                "Wireless Mouse",
+                "Silent clicks",
+                "Electronics",
+                new BigDecimal("799.00"),
+                10,
+                4.4
+        );
     }
 
     private String json(Object o) throws Exception {
@@ -91,18 +106,24 @@ class ProductApiControllerTest {
                 .andExpect(jsonPath("$.status").value(401));
     }
 
-
     @Test
     @WithMockUser(roles = "USER")
     @DisplayName("USER: can list products with search, filter, sort and pagination")
     void user_canList() throws Exception {
-        when(productService.search(eq("mouse"), eq("Electronics"), eq("price"), eq("desc"), eq(0), eq(5)))
-                .thenReturn(new PageImpl<>(List.of(sampleResponse()), PageRequest.of(0, 5), 1));
+        when(productService.search(
+                eq("mouse"), eq("Electronics"), eq("price"),
+                eq("desc"), eq(0), eq(5)
+        )).thenReturn(new PageImpl<>(
+                List.of(sampleResponse()), PageRequest.of(0, 5), 1
+        ));
 
         mockMvc.perform(get("/api/products")
-                        .param("q", "mouse").param("category", "Electronics")
-                        .param("sort", "price").param("dir", "desc")
-                        .param("page", "0").param("size", "5"))
+                        .param("q", "mouse")
+                        .param("category", "Electronics")
+                        .param("sort", "price")
+                        .param("dir", "desc")
+                        .param("page", "0")
+                        .param("size", "5"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].name").value("Wireless Mouse"))
                 .andExpect(jsonPath("$.totalElements").value(1))
@@ -127,12 +148,14 @@ class ProductApiControllerTest {
     @WithMockUser(roles = "USER")
     @DisplayName("USER: GET unknown id returns 404 with a clear message")
     void user_getUnknownId_returns404() throws Exception {
-        when(productService.getById(99L)).thenThrow(new ProductNotFoundException(99L));
+        when(productService.getById(99L))
+                .thenThrow(new ProductNotFoundException(99L));
 
         mockMvc.perform(get("/api/products/99"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value(404))
-                .andExpect(jsonPath("$.message").value("Product not found with id: 99"));
+                .andExpect(jsonPath("$.message")
+                        .value("Product not found with id: 99"));
     }
 
     @Test
@@ -141,7 +164,8 @@ class ProductApiControllerTest {
     void user_invalidIdType_returns400() throws Exception {
         mockMvc.perform(get("/api/products/abc"))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("Invalid value for parameter 'id'"));
+                .andExpect(jsonPath("$.message")
+                        .value("Invalid value for parameter 'id'"));
     }
 
     @Test
@@ -180,12 +204,12 @@ class ProductApiControllerTest {
         verify(productService, never()).delete(any());
     }
 
-
     @Test
     @WithMockUser(roles = "ADMIN")
     @DisplayName("ADMIN: POST creates a product and returns 201 with Location header")
     void admin_canCreate() throws Exception {
-        when(productService.create(any(ProductRequest.class))).thenReturn(sampleResponse());
+        when(productService.create(any(ProductRequest.class)))
+                .thenReturn(sampleResponse());
 
         mockMvc.perform(post("/api/products")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -227,7 +251,9 @@ class ProductApiControllerTest {
     @WithMockUser(roles = "ADMIN")
     @DisplayName("ADMIN: invalid data (blank name, price 0, negative stock, rating 9) returns 400 with field errors")
     void admin_createInvalid_returns400() throws Exception {
-        ProductRequest bad = new ProductRequest("   ", "x", "", new BigDecimal("0"), -5, 9.0);
+        ProductRequest bad = new ProductRequest(
+                "   ", "x", "", new BigDecimal("0"), -5, 9.0
+        );
 
         mockMvc.perform(post("/api/products")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -259,7 +285,8 @@ class ProductApiControllerTest {
     @WithMockUser(roles = "ADMIN")
     @DisplayName("ADMIN: PUT updates a product and returns 200")
     void admin_canUpdate() throws Exception {
-        when(productService.update(eq(1L), any(ProductRequest.class))).thenReturn(sampleResponse());
+        when(productService.update(eq(1L), any(ProductRequest.class)))
+                .thenReturn(sampleResponse());
 
         mockMvc.perform(put("/api/products/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -285,13 +312,18 @@ class ProductApiControllerTest {
     @WithMockUser(roles = "ADMIN")
     @DisplayName("ADMIN: PUT with invalid data returns 400")
     void admin_updateInvalid_returns400() throws Exception {
-        ProductRequest bad = new ProductRequest("Mouse", null, "Electronics", new BigDecimal("-1"), 1, 4.0);
+        ProductRequest bad = new ProductRequest(
+                "Mouse", null, "Electronics", new BigDecimal("-1"), 1, 4.0
+        );
 
         mockMvc.perform(put("/api/products/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(bad)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.fieldErrors.price").value("Price must be greater than zero"));
+                .andExpect(jsonPath("$.fieldErrors.price")
+                        .value("Price must be greater than zero"));
+
+        verify(productService, never()).update(any(), any());
     }
 
     @Test
@@ -308,19 +340,24 @@ class ProductApiControllerTest {
     @WithMockUser(roles = "ADMIN")
     @DisplayName("ADMIN: DELETE on unknown id returns 404")
     void admin_deleteUnknown_returns404() throws Exception {
-        doThrow(new ProductNotFoundException(99L)).when(productService).delete(99L);
+        doThrow(new ProductNotFoundException(99L))
+                .when(productService).delete(99L);
 
         mockMvc.perform(delete("/api/products/99"))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message").value("Product not found with id: 99"));
+                .andExpect(jsonPath("$.message")
+                        .value("Product not found with id: 99"));
     }
 
     @Test
     @WithMockUser(roles = "ADMIN")
     @DisplayName("ADMIN: can also use the read endpoints")
     void admin_canList() throws Exception {
-        when(productService.search(any(), any(), any(), any(), eq(0), eq(10)))
-                .thenReturn(new PageImpl<>(List.of(sampleResponse()), PageRequest.of(0, 10), 1));
+        when(productService.search(
+                any(), any(), any(), any(), eq(0), eq(10)
+        )).thenReturn(new PageImpl<>(
+                List.of(sampleResponse()), PageRequest.of(0, 10), 1
+        ));
 
         mockMvc.perform(get("/api/products"))
                 .andExpect(status().isOk())

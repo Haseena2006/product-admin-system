@@ -61,6 +61,8 @@ public class DataSeeder implements CommandLineRunner {
                 ));
 
         admin.setPassword(passwordEncoder.encode(adminPassword));
+        admin.setRole(Role.ADMIN);
+        admin.setEnabled(true);
         userRepository.save(admin);
 
         log.info("ADMIN account password updated");
@@ -75,6 +77,8 @@ public class DataSeeder implements CommandLineRunner {
                 ));
 
         user.setPassword(passwordEncoder.encode(userPassword));
+        user.setRole(Role.USER);
+        user.setEnabled(true);
         userRepository.save(user);
 
         log.info("USER account password updated");
