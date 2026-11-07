@@ -215,7 +215,7 @@ class ProductServiceTest {
         verify(productRepository).search(eq("mouse"), eq("Electronics"), captor.capture());
         Pageable pageable = captor.getValue();
         assertThat(pageable.getPageNumber()).isZero();
-        assertThat(pageable.getPageSize()).isEqualTo(100);
+        assertThat(pageable.getPageSize()).isEqualTo(50);
         assertThat(pageable.getSort().getOrderFor("name").getDirection()).isEqualTo(Sort.Direction.ASC);
         assertThat(pageable.getSort().getOrderFor("password")).isNull();
     }
