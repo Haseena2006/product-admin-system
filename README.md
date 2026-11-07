@@ -179,8 +179,8 @@ http://localhost:8080
 
 | Role | Username | Password |
 |---|---|---|
-| ADMIN | admin | Admin@123 |
-| USER | user | User@123 |
+| ADMIN | admin | Admin@12345 |
+| USER | user | User@12345 |
 
 These are demo credentials. Configure your own passwords using the `SEED_*_PASSWORD` environment variables before deployment.
 
