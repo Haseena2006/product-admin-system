@@ -1,0 +1,83 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Login')}"></head>
+
+<body class="auth-page">
+
+<main class="auth-card">
+
+    <h1>&#128230; Product Admin</h1>
+
+    <p class="muted">Sign in to continue</p>
+
+    <div class="alert alert-error"
+         th:if="${param.error}"
+         role="alert">
+        Invalid username or password.
+    </div>
+
+    <div class="alert alert-success"
+         th:if="${param.logout}"
+         role="status">
+        You have been logged out.
+    </div>
+
+    <div class="alert alert-success"
+         th:if="${success}"
+         th:text="${success}"
+         role="status">
+    </div>
+
+    <form th:action="@{/login}"
+          method="post"
+          autocomplete="off">
+
+        <div class="form-group">
+
+            <label for="username">Username</label>
+
+            <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    placeholder="Enter username"
+                    autocomplete="off"
+                    value=""
+                    required
+            >
+
+        </div>
+
+        <div class="form-group">
+
+            <label for="password">Password</label>
+
+            <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Enter password"
+                    autocomplete="new-password"
+                    value=""
+                    required
+            >
+
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">
+            Login
+        </button>
+
+    </form>
+
+    <p class="muted center">
+        New here?
+        <a th:href="@{/register}">Create an account</a>
+    </p>
+
+</main>
+
+</body>
+</html>
+

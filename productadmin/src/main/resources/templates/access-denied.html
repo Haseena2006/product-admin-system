@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Access denied')}"></head>
+<body class="auth-page">
+<main class="auth-card center">
+    <h1>403</h1>
+    <p class="lead">Access denied</p>
+    <p class="muted">Your account does not have permission to open this page. Only an ADMIN can add, edit or delete products.</p>
+    <a th:href="@{/dashboard}" class="btn btn-primary">Back to dashboard</a>
+</main>
+</body>
+</html>

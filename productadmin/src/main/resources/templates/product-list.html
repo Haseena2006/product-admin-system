@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Products')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar('products')}"></header>
+
+<main class="container">
+    <div class="page-header">
+        <h1>Products</h1>
+        <a sec:authorize="hasRole('ADMIN')" th:href="@{/products/new}" class="btn btn-primary">+ Add Product</a>
+    </div>
+
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <!-- Search, filter and sort (plain GET form, so the URL can be bookmarked) -->
+    <form th:action="@{/products}" method="get" class="filter-bar">
+        <input type="search" name="q" th:value="${q}" placeholder="Search by product name..." aria-label="Search products">
+        <select name="category" aria-label="Filter by category">
+            <option value="">All categories</option>
+            <option th:each="c : ${categories}" th:value="${c}" th:text="${c}" th:selected="${c == category}">Category</option>
+        </select>
+        <select name="sort" aria-label="Sort by">
+            <option value="name" th:selected="${sort == 'name'}">Sort: Name</option>
+            <option value="price" th:selected="${sort == 'price'}">Sort: Price</option>
+            <option value="rating" th:selected="${sort == 'rating'}">Sort: Rating</option>
+            <option value="stock" th:selected="${sort == 'stock'}">Sort: Stock</option>
+            <option value="createdAt" th:selected="${sort == 'createdAt'}">Sort: Newest</option>
+        </select>
+        <select name="dir" aria-label="Sort direction">
+            <option value="asc" th:selected="${dir == 'asc'}">Ascending</option>
+            <option value="desc" th:selected="${dir == 'desc'}">Descending</option>
+        </select>
+        <button type="submit" class="btn btn-primary">Apply</button>
+        <a th:href="@{/products}" class="btn btn-outline">Reset</a>
+    </form>
+
+    <p class="muted result-count">
+        <span th:text="${page.totalElements}">0</span> product(s) found
+    </p>
+
+    <section class="card">
+        <div class="table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th class="num">Price</th>
+                    <th class="num">Stock</th>
+                    <th class="num">Rating</th>
+                    <th class="actions">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="p : ${page.content}">
+                    <td><a th:href="@{/products/{id}(id=${p.id})}" th:text="${p.name}">Name</a></td>
+                    <td th:text="${p.category}">Category</td>
+                    <td class="num">&#8377; <span th:text="${#numbers.formatDecimal(p.price, 1, 'COMMA', 2, 'POINT')}">0.00</span></td>
+                    <td class="num">
+                        <span class="badge" th:text="${p.stock}"
+                              th:classappend="${p.stock == 0} ? 'badge-danger' : (${p.stock lt 10} ? 'badge-warn' : 'badge-ok')">0</span>
+                    </td>
+                    <td class="num">&#9733; <span th:text="${#numbers.formatDecimal(p.rating, 1, 1)}">0.0</span></td>
+                    <td class="actions">
+                        <a th:href="@{/products/{id}(id=${p.id})}" class="btn btn-outline btn-sm">View</a>
+                        <a sec:authorize="hasRole('ADMIN')" th:href="@{/products/{id}/edit(id=${p.id})}" class="btn btn-outline btn-sm">Edit</a>
+                        <form sec:authorize="hasRole('ADMIN')" th:action="@{/products/{id}/delete(id=${p.id})}" method="post"
+                              class="inline-form" data-confirm="Are you sure you want to delete this product?">
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${page.empty}">
+                    <td colspan="6" class="empty">No products match your search.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Pagination -->
+    <nav class="pagination" th:if="${page.totalPages gt 1}" aria-label="Pagination">
+        <a th:if="${!page.first}" class="page-link"
+           th:href="@{/products(q=${q},category=${category},sort=${sort},dir=${dir},page=${page.number - 1})}">&laquo; Prev</a>
+        <a th:each="i : ${#numbers.sequence(startPage, endPage)}" class="page-link"
+           th:classappend="${i == page.number} ? 'current'"
+           th:href="@{/products(q=${q},category=${category},sort=${sort},dir=${dir},page=${i})}"
+           th:text="${i + 1}">1</a>
+        <a th:if="${!page.last}" class="page-link"
+           th:href="@{/products(q=${q},category=${category},sort=${sort},dir=${dir},page=${page.number + 1})}">Next &raquo;</a>
+    </nav>
+</main>
+</body>
+</html>

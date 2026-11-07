@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title} + ' | Product Admin'">Product Admin</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script th:src="@{/js/app.js}" defer></script>
+</head>
+<body>
+
+<header class="navbar" th:fragment="navbar(active)">
+    <div class="navbar-inner">
+        <a class="brand" th:href="@{/dashboard}">&#128230; Product Admin</a>
+        <button class="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" data-nav-toggle>&#9776;</button>
+        <nav class="nav-links" id="nav-links">
+            <a th:href="@{/dashboard}" th:classappend="${active == 'dashboard'} ? 'active'">Dashboard</a>
+            <a th:href="@{/products}" th:classappend="${active == 'products'} ? 'active'">Products</a>
+            <a sec:authorize="hasRole('ADMIN')" th:href="@{/products/new}" th:classappend="${active == 'new'} ? 'active'">Add Product</a>
+            <span class="nav-user">
+                <span sec:authentication="name">user</span>
+                <span class="role-badge" sec:authorize="hasRole('ADMIN')">ADMIN</span>
+                <span class="role-badge user" sec:authorize="!hasRole('ADMIN')">USER</span>
+            </span>
+            <form th:action="@{/logout}" method="post" class="inline-form">
+                <button type="submit" class="btn btn-outline btn-sm">Logout</button>
+            </form>
+        </nav>
+    </div>
+</header>
+
+<div class="container" th:fragment="alerts">
+    <div class="alert alert-success" th:if="${success}" th:text="${success}" role="status"></div>
+    <div class="alert alert-error" th:if="${errorMessage}" th:text="${errorMessage}" role="alert"></div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Product form')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: navbar('new')}"></header>
+
+<main class="container narrow">
+    <div class="page-header">
+        <h1 th:text="${productId == null} ? 'Add Product' : 'Edit Product'">Add Product</h1>
+    </div>
+
+    <section class="card pad">
+        <form th:action="${productId == null} ? @{/products} : @{/products/{id}(id=${productId})}"
+              th:object="${product}" method="post" novalidate>
+
+            <div class="form-group" th:classappend="${#fields.hasErrors('name')} ? 'has-error'">
+                <label for="name">Product name *</label>
+                <input type="text" id="name" th:field="*{name}" maxlength="150">
+                <small class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></small>
+            </div>
+
+            <div class="form-group" th:classappend="${#fields.hasErrors('category')} ? 'has-error'">
+                <label for="category">Category *</label>
+                <input type="text" id="category" th:field="*{category}" list="category-list" maxlength="100">
+                <datalist id="category-list">
+                    <option th:each="c : ${categories}" th:value="${c}"></option>
+                </datalist>
+                <small class="field-error" th:if="${#fields.hasErrors('category')}" th:errors="*{category}"></small>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group" th:classappend="${#fields.hasErrors('price')} ? 'has-error'">
+                    <label for="price">Price (&#8377;) *</label>
+                    <input type="number" id="price" th:field="*{price}" step="0.01">
+                    <small class="field-error" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></small>
+                </div>
+                <div class="form-group" th:classappend="${#fields.hasErrors('stock')} ? 'has-error'">
+                    <label for="stock">Stock *</label>
+                    <input type="number" id="stock" th:field="*{stock}" step="1">
+                    <small class="field-error" th:if="${#fields.hasErrors('stock')}" th:errors="*{stock}"></small>
+                </div>
+                <div class="form-group" th:classappend="${#fields.hasErrors('rating')} ? 'has-error'">
+                    <label for="rating">Rating (0-5) *</label>
+                    <input type="number" id="rating" th:field="*{rating}" step="0.1">
+                    <small class="field-error" th:if="${#fields.hasErrors('rating')}" th:errors="*{rating}"></small>
+                </div>
+            </div>
+
+            <div class="form-group" th:classappend="${#fields.hasErrors('description')} ? 'has-error'">
+                <label for="description">Description</label>
+                <textarea id="description" th:field="*{description}" rows="4" maxlength="1000"></textarea>
+                <small class="field-error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></small>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary" th:text="${productId == null} ? 'Create product' : 'Save changes'">Save</button>
+                <a th:href="@{/products}" class="btn btn-outline">Cancel</a>
+            </div>
+        </form>
+    </section>
+</main>
+</body>
+</html>
