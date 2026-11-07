@@ -1,18 +1,28 @@
 target/
+!.mvn/wrapper/maven-wrapper.jar
 
 .idea/
 *.iml
-out/
-
-.DS_Store
-Thumbs.db
+*.iws
+*.ipr
 
 .env
-*.env
 .env.*
 !.env.example
-application-local.properties
-application-secret.properties
 
 *.log
 logs/
+
+.DS_Store
+Thumbs.db
+desktop.ini
+
+*.tmp
+*.bak
+
+out/
+build/
+
+.classpath
+.project
+.settings/
