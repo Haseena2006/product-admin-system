@@ -1,8 +1,8 @@
 # Product Admin System
 
-A full-stack Product Administration System built using **Java 17, Spring Boot 3, Spring Data JPA, Spring Security, Thymeleaf, and PostgreSQL**.
+A full-stack Product Administration System built using Java 17, Spring Boot 3.3.5, Spring Data JPA, Spring Security, Thymeleaf, and PostgreSQL.
 
-The application provides secure user authentication, role-based product management, RESTful APIs, product search, filtering, sorting, and pagination.
+The application provides secure user authentication, role-based product management, RESTful APIs, product search, filtering, sorting, pagination, and input validation.
 
 ## Features
 
@@ -14,6 +14,7 @@ The application provides secure user authentication, role-based product manageme
 - USER can view products but cannot modify them.
 - Session-based authentication for the web application.
 - HTTP Basic Authentication for REST APIs.
+- CSRF protection for browser-based requests.
 
 ### Product Management
 - Create, view, update, and delete products.
@@ -22,6 +23,7 @@ The application provides secure user authentication, role-based product manageme
 - Sort products using supported fields.
 - Pagination with page-size limits.
 - Product validation and centralized exception handling.
+- DTO-based request and response handling.
 
 ### User Interface
 - Responsive product management interface using Thymeleaf.
@@ -59,7 +61,6 @@ The application provides secure user authentication, role-based product manageme
 
 ```text
 product-admin-system/
-│
 ├── src/
 │   ├── main/
 │   │   ├── java/com/example/productadmin/
@@ -72,15 +73,12 @@ product-admin-system/
 │   │   │   ├── security/
 │   │   │   ├── service/
 │   │   │   └── validation/
-│   │   │
 │   │   └── resources/
 │   │       ├── static/
 │   │       ├── templates/
 │   │       └── application.properties
-│   │
 │   └── test/
 │       └── java/com/example/productadmin/
-│
 ├── database/
 ├── docs/
 ├── postman/
@@ -99,7 +97,7 @@ Install the following before running the project:
 - JDK 17 or compatible configured JDK.
 - PostgreSQL.
 - IntelliJ IDEA or another Java IDE.
-- Postman (for API testing).
+- Postman for API testing.
 
 ## Installation and Setup
 
@@ -120,22 +118,24 @@ CREATE DATABASE product_admin;
 
 ### 3. Configure environment variables
 
-Create a `.env` file in the project root or configure the following environment variables in your IDE or terminal.
+The application supports environment variables for database and seed account configuration.
 
-```env
+Configure these variables in your terminal or IDE Run Configuration:
+
+```properties
 DB_URL=jdbc:postgresql://localhost:5432/product_admin
 DB_USERNAME=postgres
 DB_PASSWORD=your_database_password
 
-SEED_ADMIN_PASSWORD=your_admin_password
-SEED_USER_PASSWORD=your_user_password
+SEED_ADMIN_PASSWORD=Admin@12345
+SEED_USER_PASSWORD=User@12345
 
 CORS_ALLOWED_ORIGINS=
 ```
 
-Use the actual seeded account credentials configured in the application.
+The application properties provide local development defaults for the database URL, username, and empty password. Override them with your actual database credentials.
 
-Do not commit your `.env` file or real passwords to GitHub.
+Do not commit real database passwords or secrets to GitHub.
 
 ### 4. Run the application
 
@@ -153,9 +153,7 @@ On Linux or macOS:
 
 The application runs at:
 
-```text
 http://localhost:8080
-```
 
 ## Demo Accounts
 
@@ -205,7 +203,7 @@ http://localhost:8080
 }
 ```
 
-### API Authentication
+## API Authentication
 
 The REST API uses HTTP Basic Authentication.
 
@@ -213,7 +211,7 @@ In Postman, configure:
 
 - Authorization Type: Basic Auth
 - Username: `admin`
-- Password: Use the configured admin password.
+- Password: `Admin@12345` or the configured admin password.
 
 For USER account testing, use the configured USER credentials.
 
@@ -234,31 +232,19 @@ The browser-based web application uses session authentication.
 
 Run the automated test suite using:
 
-**Windows:**
+Windows:
 
 ```powershell
 .\mvnw.cmd clean test
 ```
 
-**Linux / macOS:**
+Linux / macOS:
 
 ```bash
 ./mvnw clean test
 ```
 
-### Latest Automated Test Results
-
-| Metric | Result |
-|---|---:|
-| Total tests | 94 |
-| Passed | 94 |
-| Failures | 0 |
-| Errors | 0 |
-| Skipped | 0 |
-
-**Build result: BUILD SUCCESS**
-
-Test coverage includes:
+The automated test suite covers:
 
 - Product service operations and validation.
 - Registration service.
@@ -286,19 +272,18 @@ Import the collection into Postman and configure the required environment variab
 
 | Metric | Result |
 |---|---:|
-| Total tests | 49 |
-| Passed | 49 |
-| Failed | 0 |
-| Errors | 0 |
+| API scenarios tested | 24 |
+| Expected status codes matched | 24 |
+| Failed scenarios | 0 |
 
-**Execution result: All 49 Postman tests passed.**
+The tested scenarios cover:
 
-The collection covers:
-
-- Missing or invalid credentials.
+- User registration and password validation.
+- Missing and incorrect credentials.
 - USER read-only access.
 - ADMIN product CRUD operations.
-- Invalid product data and validation responses.
+- Product search, category filtering, and sorting.
+- Invalid product data and duplicate products.
 - Unauthorized and forbidden requests.
 - Product not found responses.
 
@@ -306,14 +291,14 @@ The collection covers:
 
 The application uses PostgreSQL for persistent storage and Spring Data JPA for database access.
 
-The `database/` directory contains database-related scripts and resources.
+The `database/` directory contains database-related SQL scripts and resources. Hibernate handles application schema management, and the application uses its Java data seeding component for initial data.
 
 ## Future Improvements
 
 - Add advanced reporting and analytics.
 - Improve product inventory tracking.
 - Add audit logging.
-- Introduce pagination and performance optimizations for large datasets.
+- Improve pagination and performance for large datasets.
 - Add deployment and production configuration.
 
 ## Author
